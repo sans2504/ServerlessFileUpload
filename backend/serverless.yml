@@ -1,0 +1,189 @@
+service: serverless-file-upload
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    FILES_TABLE: ${self:service}-files
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+        - s3:DeleteObject
+      Resource: "arn:aws:s3:::${self:service}-uploads-*/*"
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.FILES_TABLE}"
+
+functions:
+  generatePresignedUrl:
+    handler: handler.generatePresignedUrl
+    events:
+      - http:
+          path: generate-presigned-url
+          method: post
+          cors: true
+
+  getFiles:
+    handler: handler.getFiles
+    events:
+      - http:
+          path: files
+          method: get
+          cors: true
+
+  getFile:
+    handler: handler.getFile
+    events:
+      - http:
+          path: files/{id}
+          method: get
+          cors: true
+
+  deleteFile:
+    handler: handler.deleteFile
+    events:
+      - http:
+          path: files/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    FilesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.FILES_TABLE}
+        AttributeDefinitions:
+          - AttributeName: fileId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: fileId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    UploadsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-uploads-${aws:accountId}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - HEAD
+              AllowedOrigins:
+                - "*"
+              MaxAge: 3000
+
+Outputs:
+  UploadsBucketName:
+    Value: !Ref UploadsBucket
+    Description: The name of the S3 bucket for file uploads
+  FilesTableName:
+    Value: !Ref FilesTable
+    Description: The name of the DynamoDB table for file metadataservice: serverless-file-upload
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    FILES_TABLE: ${self:service}-files
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+        - s3:DeleteObject
+      Resource: "arn:aws:s3:::${self:service}-uploads-*/*"
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.FILES_TABLE}"
+
+functions:
+  generatePresignedUrl:
+    handler: handler.generatePresignedUrl
+    events:
+      - http:
+          path: generate-presigned-url
+          method: post
+          cors: true
+
+  getFiles:
+    handler: handler.getFiles
+    events:
+      - http:
+          path: files
+          method: get
+          cors: true
+
+  getFile:
+    handler: handler.getFile
+    events:
+      - http:
+          path: files/{id}
+          method: get
+          cors: true
+
+  deleteFile:
+    handler: handler.deleteFile
+    events:
+      - http:
+          path: files/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    FilesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.FILES_TABLE}
+        AttributeDefinitions:
+          - AttributeName: fileId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: fileId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    UploadsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-uploads-${aws:accountId}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - HEAD
+              AllowedOrigins:
+                - "*"
+              MaxAge: 3000
+
+Outputs:
+  UploadsBucketName:
+    Value: !Ref UploadsBucket
+    Description: The name of the S3 bucket for file uploads
+  FilesTableName:
+    Value: !Ref FilesTable
+    Description: The name of the DynamoDB table for file metadata
