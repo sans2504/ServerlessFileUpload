@@ -1,0 +1,17 @@
+{
+  "name": "serverless-file-upload-backend",
+  "version": "1.0.0",
+  "description": "Serverless file upload pipeline backend",
+  "main": "handler.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "remove": "serverless remove"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1467.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "serverless": "^3.33.0"
+  }
+}
