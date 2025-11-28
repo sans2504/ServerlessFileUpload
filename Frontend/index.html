@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serverless File Upload</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Serverless File Upload</h1>
+            <p>Upload and manage files using AWS Serverless Architecture</p>
+        </header>
+
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="fileInput" multiple style="display: none;">
+                <div class="upload-placeholder">
+                    <span>📁</span>
+                    <p>Drag & drop files here or click to browse</p>
+                    <button onclick="document.getElementById('fileInput').click()" class="browse-btn">
+                        Browse Files
+                    </button>
+                </div>
+            </div>
+            <div id="uploadProgress" class="progress-container" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span id="progressText">0%</span>
+            </div>
+        </div>
+
+        <div class="files-section">
+            <h2>Uploaded Files</h2>
+            <button onclick="loadFiles()" class="refresh-btn">Refresh</button>
+            <div id="filesList" class="files-list">
+                <!-- Files will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="upload.js"></script>
+</body>
+</html>
